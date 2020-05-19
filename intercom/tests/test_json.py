@@ -21,6 +21,12 @@ def test_decode_datetime():
     assert obj['foo_at'] == datetime(2020, 1, 1, 12, 0, 0)
 
 
+def test_decode_nested_datetime():
+    j = '{"nest": {"foo_at": 1577880000.0}}'
+    obj = json.loads(j, cls=DateTimeDecoder)
+    assert obj['nest']['foo_at'] == datetime(2020, 1, 1, 12, 0, 0)
+
+
 def test_dont_decode_number():
     j = '{"foo": 1577880000.0}'
     obj = json.loads(j, cls=DateTimeDecoder)
