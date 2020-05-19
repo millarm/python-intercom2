@@ -10,6 +10,7 @@ setup(name='python-intercom2',
       packages=['intercom'],
       install_requires=[
           'requests',
+          'python-dateutil'
       ],
       tests_require=['pytest'],
       zip_safe=False)

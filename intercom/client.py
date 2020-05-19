@@ -1,4 +1,13 @@
 import requests
+from intercom.json import DateTimeEncoder, DateTimeDecoder
+import json
+
+
+def json_decoder(self, *args):
+    return json.loads(self.content, cls=DateTimeDecoder)
+
+
+requests.models.Response.json = json_decoder
 
 
 class Client:
@@ -12,16 +21,37 @@ class Client:
         })
 
     def get(self, *args, **kwargs):
-        return self.session.get(*args, **kwargs)
+        r = self.session.get(*args, **kwargs)
+        return r
 
     def put(self, *args, **kwargs):
-        return self.session.put(*args, **kwargs)
+        d = kwargs.pop('json', None)
+        if d:
+            kwargs['data'] = json.dumps(d, cls=DateTimeEncoder)
+        r = self.session.put(*args, **kwargs)
+        r.json = json_decoder
+        return r
 
     def post(self, *args, **kwargs):
-        return self.session.post(*args, **kwargs)
+        d = kwargs.pop('json', None)
+        if d:
+            kwargs['data'] = json.dumps(d, cls=DateTimeEncoder)
+        r = self.session.post(*args, **kwargs)
+        r.json = json_decoder
+        return r
 
     def delete(self, *args, **kwargs):
-        return self.session.delete(*args, **kwargs)
+        d = kwargs.pop('json', None)
+        if d:
+            kwargs['data'] = json.dumps(d, cls=DateTimeEncoder)
+        r = self.session.delete(*args, **kwargs)
+        r.json = json_decoder
+        return r
 
     def request(self, *args, **kwargs):
-        return self.session.request(*args, **kwargs)
+        d = kwargs.pop('json', None)
+        if d:
+            kwargs['data'] = json.dumps(d, cls=DateTimeEncoder)
+        r = self.session.request(*args, **kwargs)
+        r.json = json_decoder
+        return r

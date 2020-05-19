@@ -2,6 +2,7 @@
 # So we always encode/decode python datetime or date objects as this
 import json
 from datetime import datetime, date
+from dateutil.parser import parse
 
 
 class DateTimeEncoder(json.JSONEncoder):
@@ -19,6 +20,9 @@ class DateTimeDecoder(json.JSONDecoder):
 
     def object_hook(self, dct):
         for k, v in dct.items():
-            if k.endswith("_at"):
-                dct[k] = datetime.fromtimestamp(v)
+            if k.endswith("_at") and v is not None:
+                try:
+                    dct[k] = datetime.fromtimestamp(float(v))
+                except ValueError:
+                    dct[k] = parse(v)
         return dct
