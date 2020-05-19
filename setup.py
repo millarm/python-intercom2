@@ -7,7 +7,7 @@ setup(name='python-intercom2',
       author='Matt Millar',
       author_email='matt@emillar.com',
       license='MIT',
-      packages=['intercom'],
+      packages=['intercom2'],
       install_requires=[
           'requests',
           'python-dateutil'

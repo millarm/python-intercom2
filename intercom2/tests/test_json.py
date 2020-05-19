@@ -1,4 +1,4 @@
-from intercom.json import DateTimeEncoder, DateTimeDecoder
+from intercom2.json import DateTimeEncoder, DateTimeDecoder
 import json
 from datetime import datetime, date
 from dateutil.tz import tzutc
