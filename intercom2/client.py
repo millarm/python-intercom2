@@ -68,7 +68,6 @@ class Client:
                 li = self.session.post(*args, **kwargs)
             else:
                 break
-5d8346ff7d0377003609756e
 
     def delete(self, *args, **kwargs):
         d = kwargs.pop('json', None)
