@@ -44,7 +44,6 @@ class Client:
         if d:
             kwargs['data'] = json.dumps(d, cls=DateTimeEncoder)
         r = self.session.put(*args, **kwargs)
-        r.json = json_decoder
         return r
 
     def post(self, *args, **kwargs):
@@ -52,7 +51,6 @@ class Client:
         if d:
             kwargs['data'] = json.dumps(d, cls=DateTimeEncoder)
         r = self.session.post(*args, **kwargs)
-        r.json = json_decoder
         return r
 
     def post_list(self, *args, **kwargs):
@@ -70,14 +68,13 @@ class Client:
                 li = self.session.post(*args, **kwargs)
             else:
                 break
-
+5d8346ff7d0377003609756e
 
     def delete(self, *args, **kwargs):
         d = kwargs.pop('json', None)
         if d:
             kwargs['data'] = json.dumps(d, cls=DateTimeEncoder)
         r = self.session.delete(*args, **kwargs)
-        r.json = json_decoder
         return r
 
     def request(self, *args, **kwargs):
@@ -85,5 +82,4 @@ class Client:
         if d:
             kwargs['data'] = json.dumps(d, cls=DateTimeEncoder)
         r = self.session.request(*args, **kwargs)
-        r.json = json_decoder
         return r
