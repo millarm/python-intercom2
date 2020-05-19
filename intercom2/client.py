@@ -35,7 +35,7 @@ class Client:
                 params = kwargs.pop('params', {})
                 params['starting_after'] = starting_after
                 kwargs['params'] = params
-                li = scelf.session.get(*args, **kwargs)
+                li = self.session.get(*args, **kwargs)
             else:
                 break
 
