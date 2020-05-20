@@ -12,7 +12,7 @@ requests.models.Response.json = json_decoder
 
 
 class Client:
-    def __init__(self, token):
+    def __init__(self, token, max_retries=8, delay=5):
         self.token = token
         self.session = requests.Session()
         self.session.headers.update({
@@ -21,8 +21,8 @@ class Client:
             "Content-Type": "application/json",
             "Intercom-Version": "2.0"
         })
-        self.MAX_RETRIES = 6
-        self.DELAY = 0.25
+        self.MAX_RETRIES = max_retries
+        self.DELAY = delay
 
     def get(self, *args, **kwargs):
         retries = 1
