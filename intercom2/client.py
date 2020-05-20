@@ -1,6 +1,7 @@
 import requests
 from intercom2.json import IntercomFormatEncoder, IntercomFormatDecoder
 import json
+from time import sleep
 
 
 def json_decoder(self, *args):
@@ -20,13 +21,27 @@ class Client:
             "Content-Type": "application/json",
             "Intercom-Version": "2.0"
         })
+        self.MAX_RETRIES = 6
+        self.DELAY = 0.25
 
     def get(self, *args, **kwargs):
-        r = self.session.get(*args, **kwargs)
+        retries = 1
+        while retries <= self.MAX_RETRIES:
+            r = self.session.get(*args, **kwargs)
+            if r.status_code != 429:
+                break
+            retries += 1
+            sleep(self.DELAY*retries)
         return r
 
     def get_list(self, *args, **kwargs):
-        li = self.session.get(*args, **kwargs)
+        retries = 1
+        while retries <= self.MAX_RETRIES:
+            li = self.session.get(*args, **kwargs)
+            if li.status_code != 429:
+                break
+            retries += 1
+            sleep(self.DELAY*retries)
         while True:
             for item in li.json().get('data', []):
                 yield item
@@ -35,7 +50,13 @@ class Client:
                 params = kwargs.pop('params', {})
                 params['starting_after'] = starting_after
                 kwargs['params'] = params
-                li = self.session.get(*args, **kwargs)
+                retries = 1
+                while retries <= self.MAX_RETRIES:
+                    li = self.session.get(*args, **kwargs)
+                if li.status_code != 429:
+                    break
+                retries += 1
+                sleep(self.DELAY*retries)
             else:
                 break
 
@@ -43,18 +64,36 @@ class Client:
         d = kwargs.pop('json', None)
         if d:
             kwargs['data'] = json.dumps(d, cls=IntercomFormatEncoder)
-        r = self.session.put(*args, **kwargs)
+        retries = 1
+        while retries <= self.MAX_RETRIES:
+            r = self.session.put(*args, **kwargs)
+            if r.status_code != 429:
+                break
+            retries += 1
+            sleep(self.DELAY*retries)
         return r
 
     def post(self, *args, **kwargs):
         d = kwargs.pop('json', None)
         if d:
             kwargs['data'] = json.dumps(d, cls=IntercomFormatEncoder)
-        r = self.session.post(*args, **kwargs)
+        retries = 1
+        while retries <= self.MAX_RETRIES:
+            r = self.session.post(*args, **kwargs)
+            if r.status_code != 429:
+                break
+            retries += 1
+            sleep(self.DELAY*retries)
         return r
 
     def post_list(self, *args, **kwargs):
-        li = self.session.post(*args, **kwargs)
+        retries = 1
+        while retries <= self.MAX_RETRIES:
+            li = self.session.post(*args, **kwargs)
+            if li.status_code != 429:
+                break
+            retries += 1
+            sleep(self.DELAY*retries)
         while True:
             for item in li.json().get('data', []):
                 yield item
@@ -64,8 +103,13 @@ class Client:
                 params['pagination'] = params.get('pagination', {})
                 params['pagination']['starting_after'] = starting_after
                 kwargs['json'] = params
-                print(params)
-                li = self.session.post(*args, **kwargs)
+                retries = 1
+                while retries <= self.MAX_RETRIES:
+                    li = self.session.post(*args, **kwargs)
+                    if li.status_code != 429:
+                        break
+                    retries += 1
+                    sleep(self.DELAY*retries)
             else:
                 break
 
@@ -73,12 +117,24 @@ class Client:
         d = kwargs.pop('json', None)
         if d:
             kwargs['data'] = json.dumps(d, cls=IntercomFormatEncoder)
-        r = self.session.delete(*args, **kwargs)
+        retries = 1
+        while retries <= self.MAX_RETRIES:
+            r = self.session.delete(*args, **kwargs)
+            if r.status_code != 429:
+                break
+            retries += 1
+            sleep(self.DELAY*retries)
         return r
 
     def request(self, *args, **kwargs):
         d = kwargs.pop('json', None)
         if d:
             kwargs['data'] = json.dumps(d, cls=IntercomFormatEncoder)
-        r = self.session.request(*args, **kwargs)
+        retries = 1
+        while retries <= self.MAX_RETRIES:
+            r = self.session.request(*args, **kwargs)
+            if r.status_code != 429:
+                break
+            retries += 1
+            sleep(self.DELAY*retries)
         return r
