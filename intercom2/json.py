@@ -3,6 +3,7 @@
 import json
 from datetime import datetime, date
 from dateutil.parser import parse
+from dateutil.tz import UTC
 from decimal import Decimal
 
 
@@ -19,13 +20,14 @@ class IntercomFormatEncoder(json.JSONEncoder):
 
 class IntercomFormatDecoder(json.JSONDecoder):
     def __init__(self, *args, **kwargs):
-        json.JSONDecoder.__init__(self, object_hook=self.object_hook, *args, **kwargs)
+        json.JSONDecoder.__init__(
+            self, object_hook=self.object_hook, *args, **kwargs)
 
     def object_hook(self, dct):
         for k, v in dct.items():
             if k.endswith("_at") and v is not None:
                 try:
-                    dct[k] = datetime.fromtimestamp(float(v))
+                    dct[k] = datetime.fromtimestamp(float(v), tz=UTC)
                 except ValueError:
                     dct[k] = parse(v)
         return dct

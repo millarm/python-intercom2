@@ -12,5 +12,4 @@ setup(name='python-intercom2',
           'requests',
           'python-dateutil'
       ],
-      tests_require=['pytest'],
       zip_safe=False)
