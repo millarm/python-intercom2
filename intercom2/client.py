@@ -4,11 +4,18 @@ import json
 from time import sleep
 
 
-def json_decoder(self, *args):
-    return json.loads(self.content, cls=IntercomFormatDecoder)
+def wrap_response(response):
+    """
+    Monkey-patches a response object to have our custom json loader by default.
+    Mutates the original object and then returns it for convenience.
+    """
+    original_json = response.json
 
+    def wrapped_json(*args, **kwargs):
+        return original_json(*args, cls=IntercomFormatDecoder, **kwargs)
 
-requests.models.Response.json = json_decoder
+    response.json = wrapped_json
+    return response
 
 
 class Client:
@@ -32,7 +39,7 @@ class Client:
                 break
             retries += 1
             sleep(self.DELAY*retries)
-        return r
+        return wrap_response(r)
 
     def get_list(self, *args, **kwargs):
         retries = 1
@@ -45,7 +52,8 @@ class Client:
         while True:
             for item in li.json().get('data', []):
                 yield item
-            starting_after = li.json().get('pages', {}).get('next', {}).get('starting_after', None)
+            starting_after = li.json().get('pages', {}).get(
+                'next', {}).get('starting_after', None)
             if starting_after:
                 params = kwargs.pop('params', {})
                 params['starting_after'] = starting_after
@@ -71,7 +79,7 @@ class Client:
                 break
             retries += 1
             sleep(self.DELAY*retries)
-        return r
+        return wrap_response(r)
 
     def post(self, *args, **kwargs):
         d = kwargs.pop('json', None)
@@ -84,7 +92,7 @@ class Client:
                 break
             retries += 1
             sleep(self.DELAY*retries)
-        return r
+        return wrap_response(r)
 
     def post_list(self, *args, **kwargs):
         retries = 1
@@ -97,7 +105,8 @@ class Client:
         while True:
             for item in li.json().get('data', []):
                 yield item
-            starting_after = li.json().get('pages', {}).get('next', {}).get('starting_after', None)
+            starting_after = li.json().get('pages', {}).get(
+                'next', {}).get('starting_after', None)
             if starting_after:
                 params = kwargs.pop('json', {})
                 params['pagination'] = params.get('pagination', {})
@@ -124,7 +133,7 @@ class Client:
                 break
             retries += 1
             sleep(self.DELAY*retries)
-        return r
+        return wrap_response(r)
 
     def request(self, *args, **kwargs):
         d = kwargs.pop('json', None)
@@ -137,4 +146,4 @@ class Client:
                 break
             retries += 1
             sleep(self.DELAY*retries)
-        return r
+        return wrap_response(r)
