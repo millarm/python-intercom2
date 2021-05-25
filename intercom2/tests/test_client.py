@@ -138,6 +138,170 @@ example_user_rate_limited = {
     ]
 }
 
+example_contacts_paginated_1 = {
+    "type": "list",
+    "data": [
+        {
+            "type": "contact",
+            "id": "60ad0a8cf9e27f475357b909",
+            "workspace_id": "tqs0mwt8",
+            "external_id": "1",
+            "role": "user",
+            "email": "user1@exmaple.com",
+            "phone": None,
+            "name": "User1",
+            "avatar": None,
+            "owner_id": None,
+            "social_profiles": {"type": "list", "data": []},
+            "has_hard_bounced": False,
+            "marked_email_as_spam": False,
+            "unsubscribed_from_emails": False,
+            "created_at": 1621953164,
+            "updated_at": 1621953164,
+            "signed_up_at": None,
+            "last_seen_at": None,
+            "last_replied_at": None,
+            "last_contacted_at": None,
+            "last_email_opened_at": None,
+            "last_email_clicked_at": None,
+            "language_override": None,
+            "browser": None,
+            "browser_version": None,
+            "browser_language": None,
+            "os": None,
+            "location": {
+                "type": "location",
+                "country": None,
+                "region": None,
+                "city": None,
+            },
+            "android_app_name": None,
+            "android_app_version": None,
+            "android_device": None,
+            "android_os_version": None,
+            "android_sdk_version": None,
+            "android_last_seen_at": None,
+            "ios_app_name": None,
+            "ios_app_version": None,
+            "ios_device": None,
+            "ios_os_version": None,
+            "ios_sdk_version": None,
+            "ios_last_seen_at": None,
+            "custom_attributes": {},
+            "tags": {
+                "type": "list",
+                "data": [],
+                "url": "/contacts/60ad0a8cf9e27f475357b909/tags",
+                "total_count": 0,
+                "has_more": False,
+            },
+            "notes": {
+                "type": "list",
+                "data": [],
+                "url": "/contacts/60ad0a8cf9e27f475357b909/notes",
+                "total_count": 0,
+                "has_more": False,
+            },
+            "companies": {
+                "type": "list",
+                "data": [],
+                "url": "/contacts/60ad0a8cf9e27f475357b909/companies",
+                "total_count": 0,
+                "has_more": False,
+            },
+        }
+    ],
+    "total_count": 2,
+    "pages": {
+        "type": "pages",
+        "next": {
+            "page": 2,
+            "starting_after": "Wy0xLCI2MGFkMGE4Y2Y5ZTI3ZjQ3NTM1N2I5MDkiLDJd",
+        },
+        "page": 1,
+        "per_page": 1,
+        "total_pages": 2,
+    },
+}
+
+
+example_contacts_paginated_2 = {
+    "type": "list",
+    "data": [
+        {
+            "type": "contact",
+            "id": "60ad0af5182da3f2bca3e00f",
+            "workspace_id": "tqs0mwt8",
+            "external_id": "2",
+            "role": "user",
+            "email": "user2@example.com",
+            "phone": None,
+            "name": "User2",
+            "avatar": None,
+            "owner_id": None,
+            "social_profiles": {"type": "list", "data": []},
+            "has_hard_bounced": False,
+            "marked_email_as_spam": False,
+            "unsubscribed_from_emails": False,
+            "created_at": 1621953270,
+            "updated_at": 1621953270,
+            "signed_up_at": None,
+            "last_seen_at": None,
+            "last_replied_at": None,
+            "last_contacted_at": None,
+            "last_email_opened_at": None,
+            "last_email_clicked_at": None,
+            "language_override": None,
+            "browser": None,
+            "browser_version": None,
+            "browser_language": None,
+            "os": None,
+            "location": {
+                "type": "location",
+                "country": None,
+                "region": None,
+                "city": None,
+            },
+            "android_app_name": None,
+            "android_app_version": None,
+            "android_device": None,
+            "android_os_version": None,
+            "android_sdk_version": None,
+            "android_last_seen_at": None,
+            "ios_app_name": None,
+            "ios_app_version": None,
+            "ios_device": None,
+            "ios_os_version": None,
+            "ios_sdk_version": None,
+            "ios_last_seen_at": None,
+            "custom_attributes": {},
+            "tags": {
+                "type": "list",
+                "data": [],
+                "url": "/contacts/60ad0af5182da3f2bca3e00f/tags",
+                "total_count": 0,
+                "has_more": False,
+            },
+            "notes": {
+                "type": "list",
+                "data": [],
+                "url": "/contacts/60ad0af5182da3f2bca3e00f/notes",
+                "total_count": 0,
+                "has_more": False,
+            },
+            "companies": {
+                "type": "list",
+                "data": [],
+                "url": "/contacts/60ad0af5182da3f2bca3e00f/companies",
+                "total_count": 0,
+                "has_more": False,
+            },
+        }
+    ],
+    "total_count": 2,
+    "pages": {"type": "pages", "page": 2, "per_page": 1, "total_pages": 2},
+}
+
 
 @responses.activate
 def test_get():
@@ -181,3 +345,19 @@ def test_get_retry():
     user = response.json()
     assert response.status_code == 200
     assert user['id'] == '5ba682d23d7cf92bef87bfd4'
+
+
+@responses.activate
+def test_get_list_retry():
+    responses.add(responses.GET, 'https://api.intercom.io/contacts',
+                  json=example_contacts_paginated_1, status=200)
+    responses.add(responses.GET, 'https://api.intercom.io/contacts',
+                  json=example_contacts_paginated_2, status=200)
+
+    client = Client('test-token')
+    response = client.get_list(
+        'https://api.intercom.io/contacts')
+
+    users = list(response)  # it returns a generator
+    assert users[0]['id'] == '60ad0a8cf9e27f475357b909'
+    assert users[1]['id'] == '60ad0af5182da3f2bca3e00f'
