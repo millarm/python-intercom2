@@ -32,7 +32,8 @@ class Client:
         retry_strategy = Retry(
             total=max_retries,
             backoff_factor=delay,
-            status_forcelist=[429]
+            status_forcelist=[429],
+            allowed_methods=frozenset({'DELETE', 'GET', 'HEAD', 'OPTIONS', 'PUT', 'TRACE', 'POST'})
         )
 
         self.session.mount('https://', HTTPAdapter(max_retries=retry_strategy))
