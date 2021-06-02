@@ -61,10 +61,10 @@ class Client:
                 retries = 1
                 while retries <= self.MAX_RETRIES:
                     li = self.session.get(*args, **kwargs)
-                if li.status_code != 429:
-                    break
-                retries += 1
-                sleep(self.DELAY*retries)
+                    if li.status_code != 429:
+                        break
+                    retries += 1
+                    sleep(self.DELAY*retries)
             else:
                 break
 
