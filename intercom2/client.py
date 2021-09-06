@@ -26,7 +26,7 @@ class Client:
             "Authorization": f"Bearer {self.token}",
             "Accept": "application/json",
             "Content-Type": "application/json",
-            "Intercom-Version": "2.0"
+            "Intercom-Version": "2.3"
         })
         self.MAX_RETRIES = max_retries
         self.DELAY = delay
