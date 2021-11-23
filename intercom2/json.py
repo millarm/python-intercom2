@@ -20,7 +20,7 @@ class IntercomFormatEncoder(json.JSONEncoder):
 
 class IntercomFormatDecoder(json.JSONDecoder):
     def __init__(self, *args, **kwargs):
-        kwargs.pop('encoding')
+        kwargs.pop('encoding', None)
         json.JSONDecoder.__init__(
             self, object_hook=self.object_hook, *args, **kwargs)
 
