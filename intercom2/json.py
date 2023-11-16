@@ -31,4 +31,6 @@ class IntercomFormatDecoder(json.JSONDecoder):
                     dct[k] = datetime.fromtimestamp(float(v), tz=UTC)
                 except ValueError:
                     dct[k] = parse(v)
+                except OverflowError:
+                    pass
         return dct
